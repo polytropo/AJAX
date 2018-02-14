@@ -11,8 +11,10 @@
 	<script>
 		var text = localStorage.getItem("mystorage1");
 		// console.log(text);
+        // If you are stringifying a JSON file itself, then you need to parse it two times!
+    	// var obj = JSON.parse(JSON.parse(text));
 
-    	var obj = JSON.parse(text);
+        var obj = JSON.parse(text);
     	
     	console.log(obj.id);
     	console.log("--------------------------------");
