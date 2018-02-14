@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Facebook API</title>
+	<style>
+		#fb-btn, #logout {
+			display: none
+		} 
+	</style>
+</head>
+<body>
+	<div>
+		<p id="graphAPI"></p>
+	</div>
+
+	<script>
+	  window.fbAsyncInit = function() {
+	    FB.init({
+	      appId      : '339937566508414',
+	      cookie     : true,
+	      xfbml      : true,
+	      version    : 'v2.12'
+	    });
+	      
+	    
+		FB.getLoginStatus(function(response) {
+		    statusChangeCallback(response);
+		});   
+	      
+	  };
+
+	  (function(d, s, id){
+	     var js, fjs = d.getElementsByTagName(s)[0];
+	     if (d.getElementById(id)) {return;}
+	     js = d.createElement(s); js.id = id;
+	     js.src = "https://connect.facebook.net/en_US/sdk.js";
+	     fjs.parentNode.insertBefore(js, fjs);
+	   }(document, 'script', 'facebook-jssdk'));
+
+
+	  function statusChangeCallback(response) {
+	  	console.log(response);
+	  	if(response.status=== "connected") {
+	  		console.log('Logged in and authenticated');
+	  		setElements(true);
+	  		graphAPI();
+	  		
+	  	} else {
+	  		console.log('Not authenticated!');
+	  		setElements(false);
+	  	}
+	  }
+
+
+		function checkLoginState() {
+		  FB.getLoginStatus(function(response) {
+		    statusChangeCallback(response);
+		    
+		  });
+		}
+
+		function setElements(isLoggedIn) {
+			if(isLoggedIn) {
+				document.getElementById("fb-button").style.display = 'none';
+				document.getElementById("logout").style.display = 'block';
+
+			} else {
+				document.getElementById("fb-button").style.display = 'block';
+				document.getElementById("logout").style.display = 'none';
+				document.getElementById("graphAPI").innerHTML = " ";
+			}
+		}
+		function logout() {
+			FB.logout(function(response){
+				statusChangeCallback(response);
+				setElements(false);
+			});
+		}
+
+		function graphAPI() {
+			FB.api('/me?fields=id,name,email', function(response){
+				if(response && !response.error){
+					console.log(response);
+					console.log(response.name);
+					document.getElementById("graphAPI").innerHTML = "Welcome " + response.name;
+					
+				}
+			})
+		}
+	</script>
+	
+
+	
+	<fb:login-button class="fb-login-button" data-max-rows="1" data-size="large" data-button-type="continue_with" data-show-faces="false" data-auto-logout-link="false" data-use-continue-as="true" id="fb-button" 
+	  scope="public_profile,email"
+	  onlogin="checkLoginState();">
+	</fb:login-button>
+
+
+	
+	<button class="fb-logout-button" id="logout">Log Out</button>
+	<script>
+		document.getElementById("logout").addEventListener('click', logout);
+	</script>
+</body>
+</html>
